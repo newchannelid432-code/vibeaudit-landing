@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>10 AI App Leaks You Probably Have — free self-check</title>
+<meta name="description" content="Free 10-point self-check: find exposed API keys, open endpoints, and relay misconfigs in your AI app in 20 minutes. No tools, no signup, no sell.">
+<style>
+  :root{--bg:#0b0f14;--panel:#121a22;--line:#1f2a35;--text:#dbe6ef;--muted:#8aa0b2;--accent:#38bdf8;--red:#f87171;--green:#22c55e}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65}
+  .wrap{max-width:760px;margin:0 auto;padding:32px 20px 80px}
+  h1{font-size:26px;line-height:1.25;margin-bottom:8px}
+  .intro{color:var(--muted);font-size:16px;margin-bottom:28px}
+  .item{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:8px;padding:14px 16px;margin-bottom:12px}
+  .item b{display:block;margin-bottom:4px}
+  .item p{color:var(--muted);font-size:15px}
+  code{background:#0d1620;border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:13px}
+  .flag{color:var(--red);font-weight:700}
+  .cta{margin-top:32px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px;text-align:center}
+  .btn{display:inline-block;background:var(--accent);color:#06202e;font-weight:700;padding:13px 26px;border-radius:8px;text-decoration:none}
+  .btn:hover{filter:brightness(1.08)}
+  .cta p{color:var(--muted);margin-top:10px;font-size:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>10 AI App Leaks You Probably Have Right Now</h1>
+  <p class="intro">Most AI apps leak money in one of these 10 places. Each check takes under 2 minutes. If you hit a red flag, you know you need the full scan. No tools, no signup.</p>
+
+  <div class="item"><b>1. Key in the browser</b><p>Open DevTools → Network → reload your app → look for <code>Authorization: Bearer sk-…</code> or an API key in request headers/URL. <span class="flag">Red flag:</span> your key is visible to anyone who opens the page.</p></div>
+  <div class="item"><b>2. Key in client code</b><p>Open your JS bundle and search for <code>sk-</code>, <code>api_key</code>, <code>OPENAI_API_KEY</code>, <code>Bearer</code>. <span class="flag">Red flag:</span> a key is shipped to the browser at all.</p></div>
+  <div class="item"><b>3. Open /v1 endpoint</b><p>Hit your app's <code>/v1/chat/completions</code> (or similar) with no auth header. <span class="flag">Red flag:</span> it responds with a completion, not 401/403.</p></div>
+  <div class="item"><b>4. Relay with no origin check</b><p>Send a request from a random origin — <code>curl -H "Origin: https://evil.example" …</code>. <span class="flag">Red flag:</span> it responds, no CORS 403, no allowlist.</p></div>
+  <div class="item"><b>5. No rate limit</b><p>Fire 50 requests in 10 seconds. <span class="flag">Red flag:</span> all succeed. Your API budget is a faucet.</p></div>
+  <div class="item"><b>6. Exported keys in dotfiles</b><p>Check <code>.env</code> files, <code>~/.bashrc</code>, <code>~/.zshrc</code>, and dotfile repos. <span class="flag">Red flag:</span> a real key sits anywhere on disk unencrypted.</p></div>
+  <div class="item"><b>7. Key in git history</b><p>Search your repo history for <code>sk-</code>. <span class="flag">Red flag:</span> a key was committed even if "rotated" later — the old one still works until revoked.</p></div>
+  <div class="item"><b>8. Public IP with no auth</b><p><code>curl http://&lt;your-server-ip&gt;:8000/v1</code> from outside your network. <span class="flag">Red flag:</span> it responds. Anyone on the internet can use it.</p></div>
+  <div class="item"><b>9. Unguarded admin/panel</b><p>Check <code>/admin</code>, <code>/panel</code>, <code>/_next</code>, <code>/api/debug</code>. <span class="flag">Red flag:</span> they load without a login.</p></div>
+  <div class="item"><b>10. Client tokens with broad permissions</b><p>Check network calls for your Supabase/Firebase anon key exposed with read-write access on sensitive tables. <span class="flag">Red flag:</span> data tables are editable without auth.</p></div>
+
+  <div class="cta">
+    <a class="btn" href="index.html">Found a red flag? Get the full $199 scan →</a>
+    <p>24h severity-ranked report · fix-it checklist · you don't pay if we find nothing</p>
+  </div>
+</div>
+</body>
+</html>

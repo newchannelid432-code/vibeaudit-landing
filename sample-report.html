@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sample report — vibeaudit</title>
+<meta name="description" content="Anonymized sample of the AI API Exposure Scan report so you know exactly what you get.">
+<style>
+  :root{--bg:#0b0f14;--panel:#121a22;--line:#1f2a35;--text:#dbe6ef;--muted:#8aa0b2;--accent:#38bdf8;--red:#f87171;--yellow:#fbbf24;--green:#22c55e}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.6}
+  .wrap{max-width:760px;margin:0 auto;padding:32px 20px 80px}
+  h1{font-size:26px;margin-bottom:4px}
+  .tag{color:var(--muted);font-size:14px;margin-bottom:28px}
+  h2{font-size:18px;margin:32px 0 12px;color:var(--accent)}
+  .sev{border-radius:8px;padding:14px 16px;margin-bottom:12px;border:1px solid var(--line);background:var(--panel)}
+  .sev b{display:block;margin-bottom:4px}
+  .crit{border-left:4px solid var(--red)}.crit b{color:var(--red)}
+  .high{border-left:4px solid var(--yellow)}.high b{color:var(--yellow)}
+  .med{border-left:4px solid var(--accent)}.med b{color:var(--accent)}
+  .low{border-left:4px solid var(--green)}.low b{color:var(--green)}
+  code{background:#0d1620;border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:13px}
+  .finding{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;margin-top:12px}
+  .finding h3{font-size:15px;margin-bottom:10px;color:var(--red)}
+  .finding p{margin:6px 0}
+  .muted{color:var(--muted)}
+  .note{background:#121a22;border:1px solid var(--line);border-radius:8px;padding:12px 16px;font-size:14px;color:var(--muted);margin-top:20px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>AI API Exposure Scan — Sample Report</h1>
+  <div class="tag">vibeaudit · anonymized sample (no real client data) · this is the format you receive in 24h</div>
+
+  <h2>Summary</h2>
+  <p class="muted">Scan of <code>example-app.example</code> (build stack: frontend framework + serverless API relay). We reviewed the public attack surface only — no exploitation, no data taken.</p>
+
+  <div class="sev crit"><b>CRITICAL — 1</b>Direct financial exposure (keys usable to spend money / steal data).</div>
+  <div class="sev high"><b>HIGH — 2</b>Realistic abuse path (open endpoint, weak auth).</div>
+  <div class="sev med"><b>MEDIUM — 3</b>Misconfiguration likely to matter soon.</div>
+  <div class="sev low"><b>LOW — 2</b>Hardening / hygiene.</div>
+
+  <h2>Top finding (Critical)</h2>
+  <div class="finding">
+    <h3>C-01 · Live API key exposed in the browser bundle</h3>
+    <p><b>Route:</b> <code>/_next/static/chunks/app/pages.js</code> (and mirrored in the public JS bundle).</p>
+    <p><b>Evidence:</b> The string <code>sk-…</code> appears in a network response the browser receives on load, with no origin restriction. Anyone who opens the app can read it from DevTools.</p>
+    <p><b>Impact:</b> Full spend access to the model provider account; keys are billable to you until revoked.</p>
+    <p><b>Fix (5 min):</b> Move the call behind a server-side proxy; never place the key in client code. Rotate the exposed key now — rotation must go through the provider console, not just a code edit.</p>
+    <p class="muted"><b>Why it ranks Critical:</b> immediately exploitable, direct money/data impact, trivial to reproduce.</p>
+  </div>
+
+  <h2>What the full report adds</h2>
+  <ul style="list-style:none;padding:0">
+    <li>• All findings, severity-ranked (Critical/High/Medium/Low) with route + reproduction</li>
+    <li>• Open endpoint audit (<code>/v1</code>, <code>/chat</code>, <code>/generate</code>, relay routes responding without auth)</li>
+    <li>• Relay/proxy check — CORS, rate limits, origin allowlist, abuse surface</li>
+    <li>• Ordered fix-it checklist, copy-paste ready</li>
+    <li>• 30-minute walkthrough of the top 3 fixes</li>
+  </ul>
+
+  <div class="note">This sample is anonymized and illustrative. Findings in a real report come from the actual scan of your app. You don't pay if we find nothing actionable.</div>
+</div>
+</body>
+</html>
