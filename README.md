@@ -9,8 +9,9 @@ This repository contains the **VibeGuard MCP Server**, enabling **Alexa+**, **Be
 ## 🚀 Key Features
 
 * **Open MCP Standard:** Compliant with Model Context Protocol specification (`protocolVersion: 2024-11-05`) over `stdio` and Streamable HTTP.
-* **Agentic Security Audits:** Allows Alexa+ or AI agents to inspect public PostgREST tables for unauthenticated exposure.
-* **Instant RLS Remediation:** Generates tailored PostgreSQL RLS policies to lock down leaked tables while preserving application functionality.
+* **Agentic Security Audits:** Allows **Alexa+**, **Bee (Wearable AI)**, or autonomous coding agents to inspect public PostgREST tables for unauthenticated exposure.
+* **NVIDIA Nemotron Policy Synthesis:** Integrates **NVIDIA Nemotron** (`nvidia/nemotron-4-340b-instruct`) via **Nebius Token Factory** to synthesize context-aware, production-ready PostgreSQL Row-Level Security (RLS) policies.
+* **Instant RLS Remediation:** Locks down leaked tables while preserving authentic application functionality, with deterministic rule fallback when offline.
 * **Zero Overhead:** Python standard library only. No heavy frameworks or external dependencies required.
 
 ---
@@ -41,7 +42,7 @@ Generates copy-pasteable PostgreSQL Row-Level Security policies to lock down exp
 python3 vibeguard_mcp.py --scan cintila.lovable.app
 ```
 
-### 2. Configure with MCP Clients (Claude Desktop / Cursor / Alexa+ Agent)
+### 2. Configure with MCP Clients (Claude Desktop / Cursor / Alexa+ Agent / Nebius Sandbox)
 Add VibeGuard to your MCP client configuration (`mcpServers`):
 
 ```json
@@ -49,11 +50,16 @@ Add VibeGuard to your MCP client configuration (`mcpServers`):
   "mcpServers": {
     "vibeguard": {
       "command": "python3",
-      "args": ["/path/to/vibeguard_mcp.py"]
+      "args": ["/path/to/vibeguard_mcp.py"],
+      "env": {
+        "NEBIUS_API_KEY": "your-nebius-token-factory-key",
+        "NEBIUS_MODEL": "nvidia/nemotron-4-340b-instruct"
+      }
     }
   }
 }
 ```
+*(Note: If `NEBIUS_API_KEY` is omitted, VibeGuard seamlessly uses built-in PostgreSQL rule templates).*
 
 ### 3. Example Agent Query
 > *"Alexa, scan my deployment at demo-crm.lovable.app and generate the RLS security policy."*

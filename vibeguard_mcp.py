@@ -9,11 +9,15 @@ API Backend: https://vibeguard-api.vibeguard-scanner.workers.dev
 """
 
 import sys
+import os
 import json
 import urllib.request
 import urllib.error
 
 API_BASE = "https://vibeguard-api.vibeguard-scanner.workers.dev"
+NEBIUS_API_BASE = os.environ.get("NEBIUS_API_BASE", "https://api.tokenfactory.nebius.com/v1")
+NEBIUS_API_KEY = os.environ.get("NEBIUS_API_KEY", "")
+NEBIUS_MODEL = os.environ.get("NEBIUS_MODEL", "nvidia/nemotron-4-340b-instruct")
 
 TOOLS = [
     {
@@ -75,8 +79,52 @@ def scan_target(target):
     except Exception as e:
         return {"error": str(e)}
 
+def generate_rls_with_nemotron(target, tables):
+    """Generate intelligent PostgreSQL RLS policies using NVIDIA Nemotron via Nebius Token Factory."""
+    if not NEBIUS_API_KEY:
+        return None
+    url = f"{NEBIUS_API_BASE}/chat/completions"
+    prompt = (
+        f"You are a PostgreSQL database security expert. Write production-ready Row-Level Security (RLS) policies "
+        f"for the following tables detected in application '{target}': {', '.join(tables)}.\n"
+        "Requirements:\n"
+        "1. ENABLE ROW LEVEL SECURITY on each table.\n"
+        "2. REVOKE ALL FROM anon role.\n"
+        "3. GRANT appropriate permissions to authenticated users.\n"
+        "4. CREATE POLICY restricting rows to authenticated user matching auth.uid() = id.\n"
+        "Output valid SQL statements only with brief comments."
+    )
+    payload = json.dumps({
+        "model": NEBIUS_MODEL,
+        "messages": [
+            {"role": "system", "content": "You are a specialized PostgreSQL database security assistant. Output clean, valid SQL DDL only."},
+            {"role": "user", "content": prompt}
+        ],
+        "temperature": 0.2,
+        "max_tokens": 1000
+    }).encode("utf-8")
+    req = urllib.request.Request(
+        url,
+        data=payload,
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {NEBIUS_API_KEY}"
+        }
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=20) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            return data["choices"][0]["message"]["content"].strip()
+    except Exception:
+        return None
+
 def generate_rls(target, tables):
-    """Generate PostgreSQL RLS statements for specified tables."""
+    """Generate PostgreSQL RLS statements for specified tables, using NVIDIA Nemotron on Nebius if available."""
+    nemotron_sql = generate_rls_with_nemotron(target, tables)
+    if nemotron_sql:
+        return f"-- Synthesized via NVIDIA Nemotron ({NEBIUS_MODEL}) on Nebius Token Factory\n{nemotron_sql}"
+
+    # Deterministic fallback
     policies = []
     for t in tables:
         policy = f"""-- Secure public.{t}
