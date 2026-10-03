@@ -1,0 +1,64 @@
+# VibeSec Knowledge Base & API Specification (Full Grounding Text)
+
+## About VibeSec
+VibeSec is an automated security scanning and vulnerability auditing platform designed specifically for modern web applications built using AI scaffolding tools (Lovable, Bolt.new, v0, Cursor) and serverless backends (Supabase, Firebase, Cloudflare).
+
+## Live Tools and Endpoints
+- Web Scanner: https://vibeguard-scanner.surge.sh
+- Live API Base: https://carey-safari-nicholas-corresponding.trycloudflare.com
+- Security Audit Booking & Payment: https://newchannelid432-code.github.io/vibeaudit-landing/pay.html
+- Pricing: Free Tier (Instant scan), Full Human & Automated Security Audit ($29 / ₹2,499)
+
+## API Endpoints
+
+### 1. Security Headers Audit
+- Method: POST
+- Path: /api/v1/audit/headers
+- Body: `{"url": "https://example.com"}`
+- Checks: Content-Security-Policy (CSP), Strict-Transport-Security (HSTS), X-Frame-Options (XFO), X-Content-Type-Options, Access-Control-Allow-Origin (CORS).
+- Returns: Numerical score (0-100), letter grade (A, B, C, F), and per-check status with remediation advice.
+
+### 2. Supabase RLS & Credential Audit
+- Method: POST
+- Path: /api/v1/audit/supabase
+- Body: `{"url": "https://example.com"}`
+- Checks: Scans HTML bundle and referenced JS scripts for Supabase project URLs and anon JWT tokens; evaluates data exposure risk.
+- Returns: `supabase_detected` (boolean), `project_refs_found` (int), `anonymized_refs` (list), `anon_jwt_detected` (boolean), and actionable database SQL commands.
+
+### 3. Service Health
+- Method: GET
+- Path: /health
+- Returns: `{"status": "online", "service": "VibeSec Security Auditor", "version": "1.0.0"}`
+
+## Vulnerability Remediation Guide
+
+### Supabase RLS Fix
+If Supabase is detected with unprotected tables, run the following SQL commands in the Supabase SQL Editor:
+```sql
+-- 1. Enable RLS on all public tables
+ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
+
+-- 2. Add authenticated read policy
+CREATE POLICY "Allow authenticated read" 
+ON public.profiles 
+FOR SELECT 
+TO authenticated 
+USING (true);
+
+-- 3. Add owner write policy
+CREATE POLICY "Allow individual update" 
+ON public.profiles 
+FOR UPDATE 
+TO authenticated 
+USING (auth.uid() = id);
+```
+
+### Security Headers Implementation (Nginx)
+```nginx
+add_header X-Frame-Options "SAMEORIGIN" always;
+add_header X-Content-Type-Options "nosniff" always;
+add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';" always;
+```

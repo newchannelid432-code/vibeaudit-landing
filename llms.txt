@@ -1,0 +1,26 @@
+# VibeSec & VibeGuard Security Intelligence
+
+> Automated AI-Era Security Audit & Vulnerability Scanner for Web Apps, Supabase RLS, and Security Headers.
+
+VibeSec provides developer-first, real-time security auditing for AI-generated ("vibe-coded") and modern full-stack web applications. It detects client-side database credential leaks, misconfigured Row Level Security (RLS), missing browser hardening headers, and permissive CORS policies.
+
+## Core Capabilities
+
+- **Database Exposure Detection**: Scans client-side JavaScript bundles and DOM trees for exposed Supabase URLs, Anon JWT keys, and public database tables.
+- **HTTP Security Header Audit**: Evaluates Content-Security-Policy (CSP), Strict-Transport-Security (HSTS), X-Frame-Options, X-Content-Type-Options, and CORS policies against OWASP standards.
+- **Automated Grading**: Provides instant A-F security scores and actionable remediation code snippets.
+- **REST API & MCP Integration**: Available via public REST endpoints and Model Context Protocol (MCP) servers for Cursor, Claude, and autonomous agents.
+
+## Live Services & Tools
+
+- [Free Web Scanner](https://vibeguard-scanner.surge.sh): Instant web scanner for any live URL.
+- [Live REST API Gateway](https://carey-safari-nicholas-corresponding.trycloudflare.com): High-speed JSON endpoints for automated security checks.
+- [Comprehensive Security Audit & Remediation](https://newchannelid432-code.github.io/vibeaudit-landing/pay.html): Full-stack deep audit report, proof-of-concept validation, and custom RLS policy implementation ($29 / ₹2,499).
+
+## Documentation & Knowledge Base
+
+- [Supabase RLS Security Guide](supabase-security-audit.md): Step-by-step guide to finding and fixing Supabase anonymous key data leaks.
+- [HTTP Security Headers Benchmark](security-headers-benchmark.md): Recommended CSP, HSTS, and CORS configurations for modern web frameworks.
+- [Vibe Coding Security Risks Checklist](vibe-coding-security-risks.md): Top 10 critical security oversights in apps built with Lovable, Bolt, v0, and Cursor.
+- [API Reference & Schema](api-reference.md): Full OpenAPI 3.0 specification and request examples.
+- [Full LLM Knowledge Base](llms-full.txt): Complete consolidated text for full notebook grounding and AI agent ingestion.
